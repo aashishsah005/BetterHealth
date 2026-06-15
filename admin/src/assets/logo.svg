@@ -1,0 +1,18 @@
+<svg width="207" height="49" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#2cb141">
+    <rect x="15" y="44" width="70" height="24" rx="1.5" />
+    <rect x="38" y="21" width="24" height="70" rx="1.5" />
+  </g>
+
+  <path d="M100,105 C100,105 52,60 68,34 C78,18 96,22 100,42 C104,22 122,18 132,34 C148,60 100,105 100,105 Z" fill="#1b64f2" />
+
+  <path d="M 68 62 L 84 62 L 92 40 L 104 84 L 112 62 L 132 62" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500">
+    <text x="155" y="62" font-size="44" letter-spacing="-0.5">
+      <tspan fill="#1b64f2">Better</tspan><tspan fill="#2cb141">Health</tspan>
+    </text>
+    
+    <text x="153" y="102" font-size="34" fill="#88929b" letter-spacing="-0.5">Dashboard Panel</text>
+  </g>
+</svg>
