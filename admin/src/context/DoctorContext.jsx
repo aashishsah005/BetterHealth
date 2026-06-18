@@ -29,61 +29,61 @@ const DoctorContextProvider = (props) => {
 
     }
 
-    const completeAppointment = async(appointmentId) => {
-        try{
-            const {data}=await axios.post(backendUrl+'/api/doctor/complete-appointment',{appointmentId},{headers:{dtoken:dToken}})
-            if(data.success){
+    const completeAppointment = async (appointmentId) => {
+        try {
+            const { data } = await axios.post(backendUrl + '/api/doctor/complete-appointment', { appointmentId }, { headers: { dtoken: dToken } })
+            if (data.success) {
                 toast.success(data.message)
                 await getAppointments()
             } else {
                 toast.error(data.message)
             }
-        } catch(error){
+        } catch (error) {
             console.log(error)
             toast.error(error.message)
         }
     }
 
-    const cancelAppointment = async(appointmentId) => {
-        try{
-            const {data}=await axios.post(backendUrl+'/api/doctor/cancel-appointment',{appointmentId},{headers:{dtoken:dToken}})
-            if(data.success){
+    const cancelAppointment = async (appointmentId) => {
+        try {
+            const { data } = await axios.post(backendUrl + '/api/doctor/cancel-appointment', { appointmentId }, { headers: { dtoken: dToken } })
+            if (data.success) {
                 toast.success(data.message)
                 await getAppointments()
             } else {
                 toast.error(data.message)
             }
-        } catch(error){
+        } catch (error) {
             console.log(error)
             toast.error(error.message)
         }
     }
 
-    const getDashData=async()=>{
-        try{
-            const {data}=await axios.get(backendUrl+'/api/doctor/dashboard',{headers:{dtoken:dToken}})
-            if(data.success){
+    const getDashData = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/doctor/dashboard', { headers: { dtoken: dToken } })
+            if (data.success) {
                 setDashData(data.dashData)
                 console.log(data.dashData)
             } else {
                 toast.error(data.message)
             }
-        } catch(error){
+        } catch (error) {
             console.log(error)
             toast.error(error.message)
         }
     }
 
-    const getProfileData=async()=>{
-        try{
-            const {data}=await axios.get(backendUrl+'/api/doctor/profile',{headers:{dToken}})
-            if(data.success){
+    const getProfileData = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/doctor/profile', { headers: { dtoken: dToken } })
+            if (data.success) {
                 setProfileData(data.profileData)
                 console.log(data.profileData)
             } else {
                 toast.error(data.message)
             }
-        } catch(error){
+        } catch (error) {
             console.log(error)
             toast.error(error.message)
         }
@@ -95,7 +95,7 @@ const DoctorContextProvider = (props) => {
         getAppointments,
         appointments, setAppointments,
         completeAppointment, cancelAppointment,
-        getDashData,dashData,setDashData,
+        getDashData, dashData, setDashData,
         profileData, setProfileData,
         getProfileData
     }

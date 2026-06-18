@@ -5,7 +5,7 @@ import { assets } from '../../assets/assets'
 
 const DoctorDashboard = () => {
 
-  const { dToken, dashData, setDashData, getDashData, completeAppointment, cancelAppointment } = useContext(DoctorContext)
+  const { dToken, dashData, getDashData, completeAppointment, cancelAppointment } = useContext(DoctorContext)
   const { slotDateFormat } = useContext(AppContext)
   const { currency } = useContext(AppContext)
   useEffect(() => {
@@ -44,8 +44,7 @@ const DoctorDashboard = () => {
       </div>
 
       <div className='bg-white'>
-        <div className='flex items-center gap-2.5 px-4 py--4 mt-10 rounded-t border'>
-          <img src={assets.list_icon} alt="" />
+        <div className='flex items-center gap-2.5 px-4 py-4 mt-10 rounded-t border'>          <img src={assets.list_icon} alt="" />
           <p className='font-semibold'>Latest Bookings</p>
         </div>
 

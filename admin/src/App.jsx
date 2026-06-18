@@ -27,14 +27,14 @@ const App = () => {
       <div className='flex items-start'>
         <Sidebar />
         <Routes>
-          // Admin Routes
+          {/* Admin Routes */}
           <Route path='/' element={aToken ? <Navigate to='/admin-dashboard' /> : <Navigate to='/doctor-dashboard' />} />
           <Route path='/admin-dashboard' element={<Dashboard />} />
           <Route path='/all-appointments' element={<AllAppointments />} />
           <Route path='/add-doctor' element={<AddDoctor />} />
           <Route path='/doctor-list' element={<DoctorsList />} />
 
-          // Doctor Routes
+          {/* Doctor Routes */}
           <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
           <Route path='/doctor-appointment' element={<DoctorAppointment />} />
           <Route path='/doctor-profile' element={<DoctorProfile />} />
