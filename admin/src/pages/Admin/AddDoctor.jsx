@@ -102,7 +102,7 @@ const AddDoctor = () => {
             </div>
 
             <div className='flex-1 flex flex-col gap-1'>
-              <p>Experoence</p>
+              <p>Experience</p>
               <select onChange={(e)=>setExperince(e.target.value)} value={experince} className='border rounded px-3 py-2' name='' id=''>
                 <option value="1 Year">1 Year</option>
                 <option value="2 Year">2 Year</option>
