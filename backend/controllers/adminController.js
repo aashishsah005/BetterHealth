@@ -4,6 +4,7 @@ import {v2 as cloudinary} from 'cloudinary'
 import doctorModel from '../models/doctorModel.js'
 import jwt from 'jsonwebtoken'
 import appointmentModel from '../models/appointmentModel.js'
+import userModel from '../models/userModel.js'
 
 // api for adding doctor
 const addDoctor=async(req,res)=>{
@@ -103,4 +104,47 @@ const allAppointments=async(req,res)=>{
     }
 }
 
-export {addDoctor, loginAdmin, allDoctors, allAppointments, allAppointments}
+// API for cancelling appointments
+const appointmentCancel = async (req, res) => {
+    try {
+        const { appointmentId } = req.body
+        const appointmentData = await appointmentModel.findById(appointmentId)
+
+        await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true })
+
+        // remove slot from docData 
+        const { docId, slotDate, slotTime } = appointmentData
+        const docData = await doctorModel.findById(docId)
+        let slot_booked = docData.slot_booked
+        slot_booked[slotDate] = slot_booked[slotDate].filter(e => e !== slotTime)
+        await doctorModel.findByIdAndUpdate(docId, { slot_booked })
+
+        res.json({ success: true, message: "Appointment Cancelled Successfully" })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to get dashboard data for admin pannel
+const adminDashboard=async(req,res)=>{
+    try{
+        const doctors=await doctorModel.find({})
+        const users=await userModel.find({})
+        const appointments=await appointmentModel.find({})
+        const dashData={
+            doctors: doctors.length,
+            appointments:appointments.length,
+            patients:users.length,
+            latestAppointments:appointments.reverse().slice(0,5)
+        }
+
+        res.json({success:true,dashData})
+    } catch(error){
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}
+
+export {addDoctor, loginAdmin, allDoctors, allAppointments, appointmentCancel, adminDashboard}
