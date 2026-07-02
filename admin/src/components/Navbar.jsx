@@ -7,7 +7,7 @@ import { DoctorContext } from '../context/DoctorContext'
 const Navbar = () => {
 
     const {aToken, setAToken}=useContext(AdminContext)
-    const {dToken, setDToken}=useContext(DoctorContext)
+    const {dToken, setDToken, profileData}=useContext(DoctorContext)
     
     const navigate=useNavigate()
 
@@ -25,7 +25,11 @@ const Navbar = () => {
             <img className='w-36 sm:w-40 cursor-pointer' src={assets.logo} alt="" />
             <p className='border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600'>{aToken?'Admin':'Doctor'}</p>
         </div>
-        <button onClick={logout} className='bg-primary text-white text-sm px-10 py-2 rounded-full'>Logout</button>
+        <div className='flex items-center gap-4'>
+            {aToken && <p className='text-sm text-gray-600 font-medium hidden sm:block'>Welcome, Admin</p>}
+            {dToken && profileData && <p className='text-sm text-gray-600 font-medium hidden sm:block'>Welcome, {profileData.name}</p>}
+            <button onClick={logout} className='bg-primary text-white text-sm px-10 py-2 rounded-full'>Logout</button>
+        </div>
     </div>
   )
 }

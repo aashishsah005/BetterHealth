@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createContext } from "react";
 import { toast } from 'react-toastify'
 
@@ -100,6 +100,14 @@ const DoctorContextProvider = (props) => {
         getProfileData
     }
 
+    useEffect(() => {
+        if (dToken) {
+            getProfileData()
+        } else {
+            setProfileData(false)
+        }
+    }, [dToken])
+
     return (
         <DoctorContext.Provider value={value}>
             {props.children}
@@ -107,4 +115,4 @@ const DoctorContextProvider = (props) => {
     )
 }
 
-export default DoctorContextProvider
+export default DoctorContextProvider
