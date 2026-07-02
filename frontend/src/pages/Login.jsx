@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const Login = () => {
 
   const {backendUrl,token,setToken}=useContext(AppContext)
   const navigate=useNavigate()
+  const location=useLocation()
 
   const [state,setState]=useState('Sign Up')
 
@@ -46,7 +47,8 @@ const Login = () => {
 
   useEffect(()=>{
     if(token){
-      navigate('/')
+      const destination = location.state?.from || '/'
+      navigate(destination)
     }
   },[token])
 

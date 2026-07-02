@@ -84,7 +84,7 @@ const getAvailableSlots=async ()=>{
 const bookAppointment=async()=>{
   if(!token){
     toast.warn("Login to book appointment")
-    return navigate('/login')
+    return navigate('/login', { state: { from: `/appointment/${docId}` } })
   }
   if (!slotTime) {
     toast.warn("Please select a time slot")

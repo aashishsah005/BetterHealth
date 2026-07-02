@@ -1,0 +1,305 @@
+/* ─── Call Window Styles ──────────────────────────────────────────────────────── */
+
+.call-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 10, 20, 0.92);
+    backdrop-filter: blur(10px);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: callFadeIn 0.3s ease;
+}
+
+@keyframes callFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes callPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(95, 111, 255, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(95, 111, 255, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(95, 111, 255, 0); }
+}
+
+@keyframes ringPulse {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(12deg); }
+    20% { transform: rotate(-10deg); }
+    30% { transform: rotate(8deg); }
+    40% { transform: rotate(-6deg); }
+    50% { transform: rotate(0deg); }
+}
+
+@keyframes dotFlashing {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+.call-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 400px;
+    width: 90%;
+}
+
+/* ─── Caller Info ─────────────────────────────────────────────────────────────── */
+
+.call-avatar-wrapper {
+    position: relative;
+}
+
+.call-avatar-wrapper.ringing {
+    animation: callPulse 2s infinite;
+}
+
+.call-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.call-avatar-wrapper.ringing .call-avatar {
+    border-color: #5f6FFF;
+}
+
+.call-info {
+    text-align: center;
+    color: white;
+}
+
+.call-name {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.call-status {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.call-status .status-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: dotFlashing 1.4s infinite;
+}
+
+.call-status .status-dot:nth-child(2) { animation-delay: 0.2s; }
+.call-status .status-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.call-timer {
+    font-size: 32px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.9);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+}
+
+/* ─── Video Streams ───────────────────────────────────────────────────────────── */
+
+.call-video-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 4/3;
+    background: #1a1a2e;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.call-remote-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.call-local-video {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 120px;
+    height: 90px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: #2d2d44;
+    z-index: 2;
+}
+
+.call-no-video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+    gap: 8px;
+}
+
+.call-no-video .icon {
+    font-size: 40px;
+}
+
+/* ─── Controls ────────────────────────────────────────────────────────────────── */
+
+.call-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.call-control-btn {
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+    color: white;
+}
+
+.call-control-btn:hover {
+    transform: scale(1.1);
+}
+
+.call-control-btn:active {
+    transform: scale(0.95);
+}
+
+.call-control-btn.mute {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.call-control-btn.mute.active {
+    background: #ef4444;
+}
+
+.call-control-btn.camera {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.call-control-btn.camera.active {
+    background: #ef4444;
+}
+
+.call-control-btn.end-call {
+    background: #ef4444;
+    width: 64px;
+    height: 64px;
+    font-size: 26px;
+}
+
+.call-control-btn.end-call:hover {
+    background: #dc2626;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+}
+
+/* ─── Incoming Call ───────────────────────────────────────────────────────────── */
+
+.call-incoming-actions {
+    display: flex;
+    gap: 32px;
+    margin-top: 16px;
+}
+
+.call-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white;
+}
+
+.call-action-btn .btn-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: transform 0.15s;
+}
+
+.call-action-btn .btn-icon:hover {
+    transform: scale(1.1);
+}
+
+.call-action-btn.accept .btn-icon {
+    background: #22c55e;
+    animation: callPulse 2s infinite;
+}
+
+.call-action-btn.reject .btn-icon {
+    background: #ef4444;
+}
+
+.call-action-btn .btn-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ─── Call Type Badge ─────────────────────────────────────────────────────────── */
+
+.call-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+    .call-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .call-name {
+        font-size: 18px;
+    }
+
+    .call-control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .call-control-btn.end-call {
+        width: 56px;
+        height: 56px;
+    }
+}
