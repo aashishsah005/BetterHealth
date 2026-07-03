@@ -6,6 +6,11 @@ import { v2 as cloudinary } from 'cloudinary'
 import appointmentModel from '../models/appointmentModel.js'
 import doctorModel from '../models/doctorModel.js'
 import razorpay from 'razorpay'
+import otpModel from '../models/otpModel.js'
+import transporter from '../config/nodemailer.js'
+import { OAuth2Client } from 'google-auth-library'
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // API to register user
 const registerUser = async (req, res) => {
@@ -38,8 +43,32 @@ const registerUser = async (req, res) => {
         const newUser = new userModel(userData)
         const user = await newUser.save()
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-        res.json({ success: true, token })
+        // Generate a 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString()
+
+        // Save OTP to database (upsert to handle existing OTPs)
+        await otpModel.findOneAndUpdate(
+            { email },
+            { email, otp, createdAt: Date.now() },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+        )
+
+        // Send OTP via email
+        try {
+            await transporter.sendMail({
+                from: process.env.SMTP_FROM || 'betterhealth@example.com',
+                to: email,
+                subject: 'BetterHealth Registration OTP',
+                text: `Welcome to BetterHealth! Your OTP for registration is: ${otp}. It is valid for 2 minutes.`,
+            });
+            console.log(`[Development] OTP for ${email} is ${otp}`); // For dev purposes if SMTP fails
+        } catch (mailError) {
+            console.error("Failed to send OTP email:", mailError.message);
+            // Even if email fails, log the OTP in the console for development
+            console.log(`[Development - SMTP Failed] OTP for ${email} is ${otp}`);
+        }
+
+        res.json({ success: true, message: 'OTP sent to email', requireOTP: true })
     }
     catch (error) {
         console.log(error)
@@ -57,8 +86,32 @@ const loginUser = async (req, res) => {
         }
         const isMatch = await bcrypt.compare(password, user.password)
         if (isMatch) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-            res.json({ success: true, token })
+            // Generate a 6-digit OTP
+            const otp = Math.floor(100000 + Math.random() * 900000).toString()
+
+            // Save OTP to database (upsert to handle existing OTPs)
+            await otpModel.findOneAndUpdate(
+                { email },
+                { email, otp, createdAt: Date.now() },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            )
+
+            // Send OTP via email
+            try {
+                await transporter.sendMail({
+                    from: process.env.SMTP_FROM || 'betterhealth@example.com',
+                    to: email,
+                    subject: 'BetterHealth Login OTP',
+                    text: `Your OTP for login is: ${otp}. It is valid for 2 minutes.`,
+                });
+                console.log(`[Development] OTP for ${email} is ${otp}`); // For dev purposes if SMTP fails
+            } catch (mailError) {
+                console.error("Failed to send OTP email:", mailError.message);
+                // Even if email fails, log the OTP in the console for development
+                console.log(`[Development - SMTP Failed] OTP for ${email} is ${otp}`);
+            }
+
+            res.json({ success: true, message: 'OTP sent to email', requireOTP: true })
         } else {
             return res.json({ success: false, message: 'Invalid credentials' })
         }
@@ -66,6 +119,82 @@ const loginUser = async (req, res) => {
     catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
+    }
+}
+
+// API to verify OTP for login
+const verifyOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        if (!email || !otp) {
+            return res.json({ success: false, message: 'Email and OTP are required' });
+        }
+
+        const validOtp = await otpModel.findOne({ email, otp });
+        if (!validOtp) {
+            return res.json({ success: false, message: 'Invalid or expired OTP' });
+        }
+
+        // OTP is valid, find the user
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' });
+        }
+
+        // Delete the used OTP
+        await otpModel.deleteOne({ _id: validOtp._id });
+
+        // Issue JWT token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        res.json({ success: true, token });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// API for Google Sign-In
+const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+        if (!token) {
+            return res.json({ success: false, message: 'Google token is required' });
+        }
+
+        // Verify Google token
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const { email, name, picture } = payload;
+
+        // Check if user already exists
+        let user = await userModel.findOne({ email });
+        
+        if (!user) {
+            // Create a new user if they don't exist
+            // Since they use Google, they don't have a password. 
+            // We set a random strong password for them so standard login won't work easily without resetting it.
+            const salt = await bcrypt.genSalt(10);
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+            const newUser = new userModel({
+                name,
+                email,
+                password: hashedPassword,
+                image: picture // Optionally save Google profile picture
+            });
+            user = await newUser.save();
+        }
+
+        // Issue JWT token
+        const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        res.json({ success: true, token: jwtToken });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
 }
 
@@ -262,4 +391,4 @@ const verifyRazorpay = async (req, res) => {
     }
 }
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay }
+export { registerUser, loginUser, verifyOTP, googleLogin, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay }
