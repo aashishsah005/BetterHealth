@@ -9,6 +9,7 @@ const Navbar = () => {
     const {token, setToken, userData} =useContext(AppContext)
 
     const [showMenu, setShowMenu] = useState(false)
+    const [showProfileMenu, setShowProfileMenu] = useState(false)
   
     const logut=()=>{
         setToken(false)
@@ -39,15 +40,14 @@ const Navbar = () => {
         <div className='flex item-center gap-4'>
             {
                 token
-                ? <div className='flex items-center gap-2 cursor-pointer group relative'>
+                ? <div onMouseEnter={() => setShowProfileMenu(true)} onMouseLeave={() => setShowProfileMenu(false)} className='flex items-center gap-2 cursor-pointer relative'>
                     {userData && <span className='text-sm font-medium text-gray-605 hidden sm:block mr-2'>Hi, {userData.name}!</span>}
                     <img className='w-8 rounded-full' src={userData && userData.image ? userData.image : assets.profile_pic} alt="" />
-                    <img className='w-2.5' src={assets.dropdown_icon} alt="" />
-                    <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block'>
+                    <div className={`absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 ${showProfileMenu ? 'block' : 'hidden'}`}>
                         <div className='min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4'>
-                            <p onClick={()=>navigate('/my-profile')} className='hover:text-black cursor-pointer'>My Profile</p>
-                            <p onClick={()=>navigate('/my-appointments')} className='hover:text-black cursor-pointer'>My Appointments</p>
-                            <p onClick={logut} className='hover:text-black cursor-pointer'>LogOut</p>
+                            <p onClick={()=>{navigate('/my-profile'); setShowProfileMenu(false)}} className='hover:text-black cursor-pointer'>My Profile</p>
+                            <p onClick={()=>{navigate('/my-appointments'); setShowProfileMenu(false)}} className='hover:text-black cursor-pointer'>My Appointments</p>
+                            <p onClick={()=>{logut(); setShowProfileMenu(false)}} className='hover:text-black cursor-pointer'>LogOut</p>
                         </div>
                     </div>
                 </div> : <button onClick={()=>navigate('/login')} className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block'>Create Account</button>

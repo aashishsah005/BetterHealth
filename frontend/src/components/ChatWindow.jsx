@@ -189,21 +189,37 @@ const ChatWindow = ({ appointment, onClose }) => {
             <div className="chat-container">
                 {/* Header */}
                 <div className="chat-header">
-                    <img src={doctorImage} alt={doctorName} className="chat-header-avatar" />
-                    <div className="chat-header-info">
-                        <div className="chat-header-name">{doctorName}</div>
-                        <div className="chat-header-status">
-                            {isTyping ? (
-                                'Typing...'
-                            ) : (
-                                <>
-                                    <span className="online-dot"></span>
-                                    Available
-                                </>
-                            )}
+                    <div className="chat-header-left">
+                        <div className="avatar-wrapper">
+                            <img src={doctorImage} alt={doctorName} className="chat-header-avatar" />
+                            <span className={`status-badge ${isTyping ? 'typing' : 'online'}`}></span>
+                        </div>
+                        <div className="chat-header-info">
+                            <div className="chat-header-name">{doctorName}</div>
+                            <div className="chat-header-status">
+                                {isTyping ? 'Typing...' : 'Active now'}
+                            </div>
                         </div>
                     </div>
-                    <button className="chat-close-btn" onClick={onClose}>✕</button>
+                    <div className="chat-header-actions">
+                        <button className="chat-header-btn" title="Start Voice Call">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </button>
+                        <button className="chat-header-btn" title="Start Video Call">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                            </svg>
+                        </button>
+                        <button className="chat-close-btn" onClick={onClose} title="Close Chat">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Messages */}
@@ -211,7 +227,11 @@ const ChatWindow = ({ appointment, onClose }) => {
                     <div className="chat-loading">Loading messages...</div>
                 ) : messages.length === 0 ? (
                     <div className="chat-empty-state">
-                        <div className="icon">💬</div>
+                        <div className="icon">
+                            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
                         <p>Start a conversation with {doctorName}</p>
                     </div>
                 ) : (
@@ -249,21 +269,32 @@ const ChatWindow = ({ appointment, onClose }) => {
 
                 {/* Input */}
                 <div className="chat-input-area">
-                    <textarea
-                        ref={inputRef}
-                        className="chat-input"
-                        placeholder="Type a message..."
-                        value={newMessage}
-                        onChange={handleInputChange}
-                        onKeyDown={handleKeyDown}
-                        rows={1}
-                    />
+                    <button className="chat-attach-btn" title="Attach file or report">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                        </svg>
+                    </button>
+                    <div className="chat-input-wrapper">
+                        <textarea
+                            ref={inputRef}
+                            className="chat-input"
+                            placeholder="Type a message..."
+                            value={newMessage}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            rows={1}
+                        />
+                    </div>
                     <button
                         className="chat-send-btn"
                         onClick={handleSend}
                         disabled={!newMessage.trim()}
+                        title="Send message"
                     >
-                        ➤
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
                     </button>
                 </div>
             </div>
