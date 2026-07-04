@@ -5,15 +5,15 @@ import axios from 'axios'
 import './DoctorMessages.css'
 
 const DoctorMessages = () => {
-    const { backendUrl, dToken, appointments, getAppointments, profileData } = useContext(DoctorContext)
+    const { backendUrl, dToken, appointments, getAppointments, profileData, selectedAppt, setSelectedAppt, unreadCounts, setUnreadCounts } = useContext(DoctorContext)
     const { socket } = useContext(SocketContext)
 
-    const [selectedAppt, setSelectedAppt] = useState(null)
     const [messages, setMessages] = useState([])
     const [newMessage, setNewMessage] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
     const [isTyping, setIsTyping] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [lastActiveTimes, setLastActiveTimes] = useState({})
 
     const messagesEndRef = useRef(null)
     const inputRef = useRef(null)
@@ -25,6 +25,19 @@ const DoctorMessages = () => {
             getAppointments()
         }
     }, [dToken])
+
+    // Initialize/sync last active times by patient userId
+    useEffect(() => {
+        if (appointments.length > 0) {
+            const initialTimes = {}
+            appointments.forEach((appt, index) => {
+                if (appt.userData) {
+                    initialTimes[appt.userId] = index
+                }
+            })
+            setLastActiveTimes(prev => ({ ...initialTimes, ...prev }))
+        }
+    }, [appointments])
 
     // Group appointments by unique patient (userId) using the latest appointment
     const sortedAppointments = [...appointments].reverse()
@@ -39,8 +52,14 @@ const DoctorMessages = () => {
         }
     })
 
+    // Sort uniquePatients based on last active times
+    const getActiveTime = (userId) => lastActiveTimes[userId] || 0
+    const sortedPatients = [...uniquePatients].sort((a, b) => {
+        return getActiveTime(b.userId) - getActiveTime(a.userId)
+    })
+
     // Filter by search query
-    const filteredPatients = uniquePatients.filter(appt =>
+    const filteredPatients = sortedPatients.filter(appt =>
         appt.userData.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
@@ -52,6 +71,12 @@ const DoctorMessages = () => {
     // Load chat history when selected appointment changes
     useEffect(() => {
         if (!selectedAppt) return
+
+        // Reset unread count for this selected chat in context
+        setUnreadCounts(prev => ({
+            ...prev,
+            [selectedAppt._id]: 0
+        }))
 
         const fetchMessages = async () => {
             setLoading(true)
@@ -72,29 +97,43 @@ const DoctorMessages = () => {
 
         fetchMessages()
         setNewMessage('')
-    }, [selectedAppt, backendUrl, dToken])
+    }, [selectedAppt, backendUrl, dToken, setUnreadCounts])
 
-    // Socket.IO event listeners for selected chat room
+    // Global Socket.IO listener for incoming messages to manage sidebar ordering and chat appends
     useEffect(() => {
-        if (!socket || !selectedAppt) return
+        if (!socket) return
 
-        const appointmentId = selectedAppt._id
-
-        // Join room
-        socket.emit('join-room', { appointmentId })
-
-        // Listen for incoming messages
         const handleReceiveMessage = (msg) => {
-            if (msg.appointmentId === appointmentId) {
+            // Find corresponding appointment to get patient's userId
+            const appt = appointments.find(a => a._id === msg.appointmentId)
+            if (!appt) return
+
+            // Update last active time for this patient to bubble them to the top
+            setLastActiveTimes(prev => ({
+                ...prev,
+                [appt.userId]: Date.now()
+            }))
+
+            // If the message is for the currently selected chat room, append it
+            if (selectedAppt && msg.appointmentId === selectedAppt._id) {
                 setMessages(prev => {
-                    // Check for duplicates
                     if (prev.find(m => m._id === msg._id)) return prev
                     return [...prev, msg]
                 })
             }
         }
 
-        // Listen for typing indicator
+        socket.on('receive-message', handleReceiveMessage)
+
+        return () => {
+            socket.off('receive-message', handleReceiveMessage)
+        }
+    }, [socket, selectedAppt, appointments])
+
+    // Specific Socket.IO listeners for typing indicator of selected chat
+    useEffect(() => {
+        if (!socket || !selectedAppt) return
+
         const handleTyping = ({ senderType }) => {
             if (senderType === 'user') {
                 setIsTyping(true)
@@ -107,13 +146,10 @@ const DoctorMessages = () => {
             }
         }
 
-        socket.on('receive-message', handleReceiveMessage)
         socket.on('user-typing', handleTyping)
         socket.on('user-stop-typing', handleStopTyping)
 
         return () => {
-            socket.emit('leave-room', { appointmentId })
-            socket.off('receive-message', handleReceiveMessage)
             socket.off('user-typing', handleTyping)
             socket.off('user-stop-typing', handleStopTyping)
             setIsTyping(false)
@@ -254,6 +290,11 @@ const DoctorMessages = () => {
                                             Latest Appt: {appt.slotDate} ({appt.slotTime})
                                         </div>
                                     </div>
+                                    {unreadCounts[appt._id] > 0 && (
+                                        <div className="unread-badge-sidebar">
+                                            {unreadCounts[appt._id]}
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}

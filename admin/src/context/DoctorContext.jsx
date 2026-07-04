@@ -12,12 +12,40 @@ const DoctorContextProvider = (props) => {
     const [appointments, setAppointments] = useState([])
     const [dashData, setDashData] = useState(false)
     const [profileData, setProfileData] = useState(false)
+    const [selectedAppt, setSelectedAppt] = useState(null)
+    const [unreadCounts, setUnreadCounts] = useState({})
+
+    const fetchUnreadCounts = async (appointmentsList = appointments) => {
+        if (!dToken || appointmentsList.length === 0) return
+        try {
+            const counts = {}
+            await Promise.all(
+                appointmentsList.map(async (appt) => {
+                    try {
+                        const { data } = await axios.get(
+                            backendUrl + `/api/chat/doctor/unread/${appt._id}`,
+                            { headers: { dtoken: dToken } }
+                        )
+                        if (data.success) {
+                            counts[appt._id] = data.count
+                        }
+                    } catch (err) {
+                        console.log(err)
+                    }
+                })
+            )
+            setUnreadCounts(counts)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const getAppointments = async () => {
         try {
             const { data } = await axios.get(backendUrl + '/api/doctor/appointments', { headers: { dtoken: dToken } })
             if (data.success) {
                 setAppointments(data.appointments)
+                fetchUnreadCounts(data.appointments)
                 console.log(data.appointments)
             } else {
                 toast.error(data.message)
@@ -89,6 +117,8 @@ const DoctorContextProvider = (props) => {
         }
     }
 
+    const unreadTotal = Object.values(unreadCounts).reduce((a, b) => a + b, 0)
+
     const value = {
         backendUrl, dToken,
         setDToken,
@@ -97,7 +127,10 @@ const DoctorContextProvider = (props) => {
         completeAppointment, cancelAppointment,
         getDashData, dashData, setDashData,
         profileData, setProfileData,
-        getProfileData
+        getProfileData,
+        selectedAppt, setSelectedAppt,
+        unreadCounts, setUnreadCounts,
+        unreadTotal, fetchUnreadCounts
     }
 
     useEffect(() => {
