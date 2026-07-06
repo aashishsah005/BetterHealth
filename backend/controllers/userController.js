@@ -53,20 +53,18 @@ const registerUser = async (req, res) => {
             { upsert: true, new: true, setDefaultsOnInsert: true }
         )
 
-        // Send OTP via email
-        try {
-            await transporter.sendMail({
-                from: process.env.SMTP_FROM || 'betterhealth@example.com',
-                to: email,
-                subject: 'BetterHealth Registration OTP',
-                text: `Welcome to BetterHealth! Your OTP for registration is: ${otp}. It is valid for 2 minutes.`,
-            });
-            console.log(`[Development] OTP for ${email} is ${otp}`); // For dev purposes if SMTP fails
-        } catch (mailError) {
+        // Send OTP via email (non-blocking)
+        transporter.sendMail({
+            from: process.env.SMTP_FROM || 'betterhealth@example.com',
+            to: email,
+            subject: 'BetterHealth Registration OTP',
+            text: `Welcome to BetterHealth! Your OTP for registration is: ${otp}. It is valid for 2 minutes.`,
+        }).then(() => {
+            console.log(`[Development] OTP for ${email} is ${otp}`);
+        }).catch((mailError) => {
             console.error("Failed to send OTP email:", mailError.message);
-            // Even if email fails, log the OTP in the console for development
             console.log(`[Development - SMTP Failed] OTP for ${email} is ${otp}`);
-        }
+        });
 
         res.json({ success: true, message: 'OTP sent to email', requireOTP: true })
     }
@@ -96,20 +94,18 @@ const loginUser = async (req, res) => {
                 { upsert: true, new: true, setDefaultsOnInsert: true }
             )
 
-            // Send OTP via email
-            try {
-                await transporter.sendMail({
-                    from: process.env.SMTP_FROM || 'betterhealth@example.com',
-                    to: email,
-                    subject: 'BetterHealth Login OTP',
-                    text: `Your OTP for login is: ${otp}. It is valid for 2 minutes.`,
-                });
-                console.log(`[Development] OTP for ${email} is ${otp}`); // For dev purposes if SMTP fails
-            } catch (mailError) {
+            // Send OTP via email (non-blocking)
+            transporter.sendMail({
+                from: process.env.SMTP_FROM || 'betterhealth@example.com',
+                to: email,
+                subject: 'BetterHealth Login OTP',
+                text: `Your OTP for login is: ${otp}. It is valid for 2 minutes.`,
+            }).then(() => {
+                console.log(`[Development] OTP for ${email} is ${otp}`);
+            }).catch((mailError) => {
                 console.error("Failed to send OTP email:", mailError.message);
-                // Even if email fails, log the OTP in the console for development
                 console.log(`[Development - SMTP Failed] OTP for ${email} is ${otp}`);
-            }
+            });
 
             res.json({ success: true, message: 'OTP sent to email', requireOTP: true })
         } else {
