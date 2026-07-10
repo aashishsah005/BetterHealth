@@ -14,7 +14,7 @@ const Footer = () => {
 
             {/* --------center Section-------- */}
             <div>
-                <p className='text-xl font-mediummb-5'>Company</p>
+                <p className='text-xl font-medium mb-5'>Company</p>
                 <ul className='flex flex-col gap-2 text-gray-600'>
                     <li>Home</li>
                     <li>About Us</li>
@@ -25,7 +25,7 @@ const Footer = () => {
 
             {/* ---------Rigght Section--------- */}
             <div>
-                <p className='text-xl font-mediummb-5'>Get In Touch</p>
+                <p className='text-xl font-medium mb-5'>Get In Touch</p>
                 <ul className='flex flex-col gap-2 text-gray-600'>
                     <li>+91 9608449927</li>
                     <li>aashishsah005@gmail.com</li>
@@ -37,7 +37,7 @@ const Footer = () => {
         {/* ---------copyright---------- */}
         <div>
             <hr />
-            <p className='py-5 text-sm text-center'>Copyright @026@ BetterHealth - All Right Reserved.</p>
+            <p className='py-5 text-sm text-center'>Copyright ©2026 BetterHealth - All Rights Reserved.</p>
         </div>
     </div>
   )

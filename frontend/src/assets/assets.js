@@ -17,6 +17,12 @@ import stripe_logo from './stripe_logo.png'
 import razorpay_logo from './razorpay_logo.png'
 import call_icon from './call_icon.svg'
 import message_icon from './message_icon.svg'
+import end_call from './end_call.svg'
+import mic_off from './mic_off.svg'
+import mic_on from './mic_on.svg'
+import video_off from './video_off.svg'
+import video_icon from './video_icon.svg'
+import send_icon from './send_icon.svg'
 import doc1 from './doc1.png'
 import doc2 from './doc2.png'
 import doc3 from './doc3.png'
@@ -59,7 +65,13 @@ export const assets = {
     stripe_logo,
     razorpay_logo,
     call_icon,
-    message_icon
+    message_icon,
+    end_call,
+    mic_off,
+    mic_on,
+    video_off,
+    video_icon,
+    send_icon
 }
 
 export const specialityData = [

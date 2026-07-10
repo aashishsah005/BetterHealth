@@ -129,3 +129,14 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# Python virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class

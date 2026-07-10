@@ -24,16 +24,21 @@ const SocketContextProvider = (props) => {
             })
 
             newSocket.on('connect', () => {
-                console.log('Socket connected:', newSocket.id)
-                // Register this user
+                console.log('[Socket] Connected:', newSocket.id)
+                // Register this user with their MongoDB ID
                 newSocket.emit('register', {
-                    odId: userData._id,
+                    odId: userData._id,   // kept as odId to match server handler
                     role: 'user'
                 })
             })
 
+            newSocket.on('online-users', (users) => {
+                setOnlineUsers(new Set(users))
+            })
+
             newSocket.on('disconnect', () => {
                 console.log('Socket disconnected')
+                setOnlineUsers(new Set())
             })
 
             newSocket.on('connect_error', (error) => {
@@ -45,12 +50,14 @@ const SocketContextProvider = (props) => {
             return () => {
                 newSocket.disconnect()
                 setSocket(null)
+                setOnlineUsers(new Set())
             }
         } else {
             // No token or userData, disconnect if connected
             if (socket) {
                 socket.disconnect()
                 setSocket(null)
+                setOnlineUsers(new Set())
             }
         }
     }, [token, backendUrl, userData])

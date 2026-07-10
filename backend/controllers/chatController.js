@@ -97,4 +97,80 @@ const getUnreadCount = async (req, res) => {
     }
 }
 
-export { getMessages, sendMessage, getUnreadCount }
+// Upload a file to chat
+import { v2 as cloudinary } from 'cloudinary'
+import fs from 'fs'
+
+const uploadChatFile = async (req, res) => {
+    try {
+        const { appointmentId } = req.body
+        const { userId, docId } = req.body
+        const file = req.file
+
+        if (!appointmentId || !file) {
+            if (file) {
+                try { fs.unlinkSync(file.path) } catch (_) {}
+            }
+            return res.json({ success: false, message: 'Missing required fields' })
+        }
+
+        // Verify appointment exists
+        const appointment = await appointmentModel.findById(appointmentId)
+        if (!appointment) {
+            try { fs.unlinkSync(file.path) } catch (_) {}
+            return res.json({ success: false, message: 'Appointment not found' })
+        }
+
+        const senderId = userId || docId
+        const senderType = userId ? 'user' : 'doctor'
+
+        if (appointment.userId !== senderId && appointment.docId !== senderId) {
+            try { fs.unlinkSync(file.path) } catch (_) {}
+            return res.json({ success: false, message: 'Unauthorized access' })
+        }
+
+        // Upload to Cloudinary
+        const uploadResult = await cloudinary.uploader.upload(file.path, { resource_type: 'auto' })
+        
+        // Remove temp file
+        try { fs.unlinkSync(file.path) } catch (_) {}
+
+        const newMessage = new messageModel({
+            appointmentId,
+            senderId,
+            senderType,
+            message: '',
+            fileUrl: uploadResult.secure_url,
+            fileName: file.originalname
+        })
+
+        await newMessage.save()
+
+        // Broadcast via Socket.IO
+        const io = req.app.get('socketio')
+        if (io) {
+            io.to(appointmentId).emit('receive-message', {
+                _id: newMessage._id,
+                appointmentId,
+                senderId,
+                senderType,
+                message: '',
+                fileUrl: newMessage.fileUrl,
+                fileName: newMessage.fileName,
+                read: false,
+                createdAt: newMessage.createdAt
+            })
+        }
+
+        res.json({ success: true, message: 'File sent', data: newMessage })
+
+    } catch (error) {
+        if (req.file) {
+            try { fs.unlinkSync(req.file.path) } catch (_) {}
+        }
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+export { getMessages, sendMessage, getUnreadCount, uploadChatFile }

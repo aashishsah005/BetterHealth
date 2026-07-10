@@ -16,6 +16,7 @@ const MyAppointments = () => {
   const [showChat, setShowChat] = useState(null)
   const [showCall, setShowCall] = useState(null)
   const [isCallCaller, setIsCallCaller] = useState(false)
+  const [callIsAudioOnly, setCallIsAudioOnly] = useState(false)
   const [incomingCallData, setIncomingCallData] = useState(null)
 
   const months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -140,10 +141,19 @@ const MyAppointments = () => {
     }
   }, [socket, appointments])
 
+  // Called by MyAppointments call buttons or ChatWindow header call buttons
+  const handleStartCall = ({ appointment, isAudioOnly }) => {
+    setShowCall(appointment)
+    setIsCallCaller(true)
+    setCallIsAudioOnly(isAudioOnly)
+    setShowChat(null) // close chat when starting a call
+  }
+
   const acceptCall = () => {
     if (incomingCallData) {
       setShowCall(incomingCallData.appointment)
       setIsCallCaller(false)
+      setCallIsAudioOnly(incomingCallData.callType === 'audio')
       setIncomingCallData(null)
     }
   }
@@ -190,7 +200,7 @@ const MyAppointments = () => {
                     Message Doctor
                   </button>
                   <button
-                    onClick={() => { setShowCall(item); setIsCallCaller(true); }}
+                    onClick={() => handleStartCall({ appointment: item, isAudioOnly: false })}
                     className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border border-green-500 rounded hover:bg-green-600 hover:text-white transition-all duration-300 font-medium flex items-center justify-center gap-2'
                   >
                     <img className='w-4 h-4' src={assets.call_icon} alt="" />
@@ -235,6 +245,7 @@ const MyAppointments = () => {
         <ChatWindow
           appointment={showChat}
           onClose={() => setShowChat(null)}
+          onStartCall={handleStartCall}
         />
       )}
 
@@ -243,7 +254,8 @@ const MyAppointments = () => {
         <CallWindow
           appointment={showCall}
           isCaller={isCallCaller}
-          onClose={() => setShowCall(null)}
+          isAudioOnly={callIsAudioOnly}
+          onClose={() => { setShowCall(null); setCallIsAudioOnly(false); }}
         />
       )}
 
