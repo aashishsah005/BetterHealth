@@ -13,6 +13,14 @@ import earning_icon from './earning_icon.svg'
 import patients_icon from './patients_icon.svg'
 import logo from './logo.svg'
 import profile_icon from './profile_icon.svg'
+import video_icon from './video_icon.svg'
+import call_icon from './call_icon.svg'
+import chats_icon from './chats_icon.svg'
+import end_call from './end_call.svg'
+import mic_off from './mic_off.svg'
+import mic_on from './mic_on.svg'
+import video_off from './video_off.svg'
+import send_icon from './send_icon.svg'
 
 export const assets = {
     logo,
@@ -29,5 +37,13 @@ export const assets = {
     tick_icon,
     appointments_icon,
     earning_icon,
-    profile_icon
+    profile_icon,
+    video_icon,
+    call_icon,
+    chats_icon,
+    end_call,
+    mic_off,
+    mic_on,
+    video_off,
+    send_icon,
 }

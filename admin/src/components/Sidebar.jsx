@@ -48,8 +48,14 @@ const Sidebar = () => {
             <p className='hidden md:block'>Appointments</p>
           </NavLink>
 
+          <NavLink className={({isActive})=>`flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/doctor-consultations'}>
+            <img src={assets.list_icon} className='w-5 h-5' alt="" />
+            <p className='hidden md:block'>CareScribe AI</p>
+          </NavLink>
+
+
           <NavLink className={({isActive})=>`flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''}`} to={'/doctor-messages'}>
-            <img src={assets.patients_icon} className='w-5 h-5' alt="" />
+            <img src={assets.chats_icon} className='w-5 h-5' alt="" />
             <p className='hidden md:block'>Messages</p>
             {unreadTotal > 0 && (
               <span className="ml-auto bg-[#10b981] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">

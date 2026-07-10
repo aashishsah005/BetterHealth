@@ -15,6 +15,9 @@ import DoctorDashboard from './pages/Doctor/DoctorDashboard';
 import DoctorAppointment from './pages/Doctor/DoctorAppointment';
 import DoctorProfile from './pages/Doctor/DoctorProfile';
 import DoctorMessages from './pages/Doctor/DoctorMessages';
+import CareScribeDashboard from './pages/Doctor/CareScribeDashboard';
+import NewConsultation from './pages/Doctor/NewConsultation';
+import ConsultationDetail from './pages/Doctor/ConsultationDetail';
 
 const App = () => {
 
@@ -38,6 +41,9 @@ const App = () => {
           {/* Doctor Routes */}
           <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
           <Route path='/doctor-appointment' element={<DoctorAppointment />} />
+          <Route path='/doctor-consultations' element={<CareScribeDashboard />} />
+          <Route path='/doctor-new-consultation' element={<NewConsultation />} />
+          <Route path='/doctor-consultation/:id' element={<ConsultationDetail />} />
           <Route path='/doctor-profile' element={<DoctorProfile />} />
           <Route path='/doctor-messages' element={<DoctorMessages />} />
         </Routes>

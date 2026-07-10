@@ -7,6 +7,7 @@ export const SocketContext = createContext()
 const SocketContextProvider = (props) => {
     const { backendUrl, dToken, profileData, appointments, selectedAppt, setUnreadCounts } = useContext(DoctorContext)
     const [socket, setSocket] = useState(null)
+    const [onlineUsers, setOnlineUsers] = useState(new Set())
 
     useEffect(() => {
         if (dToken && backendUrl && profileData && profileData._id) {
@@ -29,8 +30,13 @@ const SocketContextProvider = (props) => {
                 })
             })
 
+            newSocket.on('online-users', (users) => {
+                setOnlineUsers(new Set(users))
+            })
+
             newSocket.on('disconnect', () => {
                 console.log('Admin Socket disconnected')
+                setOnlineUsers(new Set())
             })
 
             newSocket.on('connect_error', (error) => {
@@ -42,11 +48,13 @@ const SocketContextProvider = (props) => {
             return () => {
                 newSocket.disconnect()
                 setSocket(null)
+                setOnlineUsers(new Set())
             }
         } else {
             if (socket) {
                 socket.disconnect()
                 setSocket(null)
+                setOnlineUsers(new Set())
             }
         }
     }, [dToken, backendUrl, profileData])
@@ -88,11 +96,19 @@ const SocketContextProvider = (props) => {
     useEffect(() => {
         if (!socket || appointments.length === 0) return
 
-        appointments.forEach(appt => {
-            socket.emit('join-room', { appointmentId: appt._id })
-        })
+        const joinRooms = () => {
+            console.log('[Socket] Joining rooms for appointments:', appointments.length)
+            appointments.forEach(appt => {
+                socket.emit('join-room', { appointmentId: appt._id })
+            })
+        }
+
+        joinRooms()
+
+        socket.on('connect', joinRooms)
 
         return () => {
+            socket.off('connect', joinRooms)
             appointments.forEach(appt => {
                 socket.emit('leave-room', { appointmentId: appt._id })
             })
@@ -126,7 +142,8 @@ const SocketContextProvider = (props) => {
     }, [socket, selectedAppt])
 
     const value = {
-        socket
+        socket,
+        onlineUsers
     }
 
     return (

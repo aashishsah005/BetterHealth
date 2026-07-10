@@ -15,6 +15,7 @@ const DoctorAppointment = () => {
     const [showChat, setShowChat] = useState(null)
     const [showCall, setShowCall] = useState(null)
     const [isCallCaller, setIsCallCaller] = useState(false)
+    const [callIsAudioOnly, setCallIsAudioOnly] = useState(false)
     const [incomingCallData, setIncomingCallData] = useState(null)
 
     useEffect(() => {
@@ -59,10 +60,19 @@ const DoctorAppointment = () => {
         }
     }, [socket, appointments])
 
+    // Called when doctor starts voice/video call from ChatWindow or appointments table
+    const handleStartCall = ({ appointment, isAudioOnly }) => {
+        setShowCall(appointment)
+        setIsCallCaller(true)
+        setCallIsAudioOnly(isAudioOnly)
+        setShowChat(null) // close chat when starting a call
+    }
+
     const acceptCall = () => {
         if (incomingCallData) {
             setShowCall(incomingCallData.appointment)
             setIsCallCaller(false)
+            setCallIsAudioOnly(incomingCallData.callType === 'audio')
             setIncomingCallData(null)
         }
     }
@@ -116,19 +126,19 @@ const DoctorAppointment = () => {
                                             
                                             <button 
                                                 onClick={() => setShowChat(item)} 
-                                                className='w-8 h-8 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-650 hover:text-white transition-all duration-200' 
+                                                className='w-8 h-8 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 hover:scale-110 transition-all duration-200' 
                                                 title="Message Patient"
                                             >
-                                                💬
+                                                <img src={assets.chats_icon} alt="Chat" style={{ width: '16px', height: '16px' }} />
                                             </button>
                                             
                                             <button 
-                                                onClick={() => { setShowCall(item); setIsCallCaller(true); }} 
-                                                className='w-8 h-8 flex items-center justify-center bg-green-50 text-green-600 rounded-full hover:bg-green-650 hover:text-white transition-all duration-200' 
-                                                title="Call Patient"
-                                            >
-                                                📞
-                                            </button>
+                                                 onClick={() => handleStartCall({ appointment: item, isAudioOnly: false })} 
+                                                 className='w-8 h-8 flex items-center justify-center bg-green-50 text-green-600 rounded-full hover:bg-green-100 hover:scale-110 transition-all duration-200' 
+                                                 title="Call Patient (Video)"
+                                             >
+                                                 <img src={assets.call_icon} alt="Call" style={{ width: '16px', height: '16px' }} />
+                                             </button>
                                         </div>
                             }
                         </div>
@@ -141,6 +151,7 @@ const DoctorAppointment = () => {
                 <ChatWindow 
                     appointment={showChat} 
                     onClose={() => setShowChat(null)} 
+                    onStartCall={handleStartCall}
                 />
             )}
 
@@ -149,7 +160,8 @@ const DoctorAppointment = () => {
                 <CallWindow 
                     appointment={showCall} 
                     isCaller={isCallCaller} 
-                    onClose={() => setShowCall(null)} 
+                    isAudioOnly={callIsAudioOnly}
+                    onClose={() => { setShowCall(null); setCallIsAudioOnly(false); }} 
                 />
             )}
 
