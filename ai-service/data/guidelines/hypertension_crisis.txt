@@ -1,0 +1,7 @@
+Guideline Title: ACC/AHA Hypertensive Crisis Management Guidelines
+Source Citation: ACC/AHA Hypertension Clinical Practice Guidelines (2017)
+Key Criteria:
+1. Hypertensive Crisis is defined as a Systolic Blood Pressure (SBP) greater than 180 mmHg and/or Diastolic Blood Pressure (DBP) greater than 120 mmHg.
+2. Hypertensive Emergency: SBP > 180 or DBP > 120 accompanied by target organ damage (e.g., chest pain, dyspnea, neurological deficits, headache, visual changes, hematuria). This is classified as HIGH urgency. Requires immediate ICU admission and controlled reduction of blood pressure.
+3. Hypertensive Urgency: SBP > 180 or DBP > 120 without evidence of acute target organ damage. This is classified as MEDIUM urgency. Requires adjustments to oral anti-hypertensive medications and close outpatient follow-up within 24-48 hours.
+4. Elevated blood pressure (SBP 120-129 and DBP < 80) or Stage 1 Hypertension (SBP 130-139 or DBP 80-89) without acute symptoms is classified as LOW urgency. Requires lifestyle modifications and outpatient clinic follow-up.

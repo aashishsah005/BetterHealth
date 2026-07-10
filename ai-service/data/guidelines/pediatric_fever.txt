@@ -1,0 +1,7 @@
+Guideline Title: CDC Pediatric Fever Triage Criteria
+Source Citation: CDC Clinical Guidance for Infant and Pediatric Fever Management (2024)
+Key Criteria:
+1. Infants under 3 months (90 days) with a rectal temperature of 100.4°F (38°C) or higher must be triaged as HIGH urgency. They require immediate medical evaluation, septic workup, and monitoring due to the risk of serious bacterial infections (SBI).
+2. Children aged 3 to 36 months with a temperature of 102.2°F (39°C) or higher should be triaged as MEDIUM urgency. They require clinical evaluation to identify the source of infection, monitor hydration, and review immunization history.
+3. Children presenting with fever accompanied by lethargy, inconsolable crying, toxic appearance, petechial rash, or stiff neck must be triaged as HIGH urgency regardless of age.
+4. Simple viral fevers with temperature under 101.5°F (38.6°C) in fully immunized children who are active and hydrated are triaged as LOW urgency. Provide symptomatic care instructions (hydration, Acetaminophen/Ibuprofen).

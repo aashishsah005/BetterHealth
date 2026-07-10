@@ -1,0 +1,8 @@
+Guideline Title: AHA/ACC Chest Pain Evaluation Protocol
+Source Citation: American Heart Association (AHA) and American College of Cardiology (ACC) Guidelines for the Evaluation and Diagnosis of Chest Pain (2021)
+Key Criteria:
+1. Any adult patient presenting with acute, pressure-like, crushing, or squeezing substernal chest pain lasting more than 10 minutes must be triaged immediately as HIGH urgency.
+2. High-risk symptoms including pain radiating to the left arm, neck, jaw, back, or epigastrium, associated with diaphoresis, dyspnea, nausea, vomiting, syncope, or lightheadedness are classified as HIGH urgency.
+3. Patients with known coronary artery disease (CAD) presenting with chest pain that is atypical but different from stable angina, or pain not relieved by nitroglycerin, are triaged as HIGH urgency.
+4. Non-cardiac chest pain (e.g., musculoskeletal chest wall tenderness on palpation, stabbing pain worse with deep inspiration/pleuritic) without associated cardiac risk factors or systemic symptoms is triaged as LOW to MEDIUM urgency depending on age and vital signs.
+5. Immediate management includes obtaining a 12-lead EKG within 10 minutes of arrival, giving Aspirin 324mg (chewable), and checking cardiac troponins.
